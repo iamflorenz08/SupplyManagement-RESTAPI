@@ -13,6 +13,17 @@ const FullNameSchema = new Schema({
     }
 },{_id:false})
 
+const PasswordSchema = new Schema({
+    password: {
+        type: String,
+        default: null
+    },
+    isGmail: {
+        type: Boolean,
+        default: false
+    }
+}, {_id:false})
+
 const UserSchema = new Schema({
     email: {
         type: String,
@@ -20,11 +31,11 @@ const UserSchema = new Schema({
         required: true
     },
     password: {
-        type: String
+        type: PasswordSchema
     },
     photo_URL: {
         type: String,
-        required: true
+        default: null
     },
     full_name: {
         type: FullNameSchema
@@ -39,6 +50,10 @@ const UserSchema = new Schema({
     position: {
         type: String,
         required: true
+    },
+    access_token: {
+        type: String,
+        default: null
     },
     isApproved: {
         type: Boolean,
