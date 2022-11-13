@@ -48,7 +48,6 @@ const post_sign_in = async (req,res) =>{
 
     if(!email || !rawPassword) return res.status(400).json({message: "Invalid input"})
 
-
     let userData = await UserModel.findOne({email})
     if(!userData) return res.status(200).json({ message: "User not found"})
     if(userData.password.isGmail) return res.status(200).json({ message: "Continue with gmail instead"})
