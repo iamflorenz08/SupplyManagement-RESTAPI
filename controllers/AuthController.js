@@ -1,7 +1,6 @@
 const UserModel = require('../models/UserModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
-const { json } = require('express')
 require('dotenv').config()
 
 const post_add_user = async (req, res) =>{
@@ -65,15 +64,15 @@ const get_check = async (req,res)=>{
     let userData = await UserModel.findOne({email})
     
     if(userData){
-        return res.status(200).json({
-            isExist: true,
-            isGmail: userData.password.isGmail
-        })
+        if(userData.password.isGmail){
+            return res.status(200).json({
+                hasAccess: true
+            })
+        }
     }
 
-    return res.json({
-        isExist: false,
-        isGmail: false
+    return res.status(200).json({
+        hasAccess: false
     })
 }   
 
