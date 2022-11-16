@@ -64,17 +64,19 @@ const get_check = async (req,res)=>{
     let userData = await UserModel.findOne({email})
     
     if(userData){
-        if(userData.password.isGmail){
-            return res.status(200).json({
-                hasAccess: true
-            })
-        }
+        return res.status(200).json({
+            isExist: true,
+            isGmail: userData.password.isGmail
+        })
     }
 
     return res.status(200).json({
-        hasAccess: false
+        isExist: false,
+        isGmail: false
     })
 }   
+
+
 
 const generateToken = (email) =>{
     const token = jwt.sign({email}, process.env.ACCESS_SECRET_TOKEN)
