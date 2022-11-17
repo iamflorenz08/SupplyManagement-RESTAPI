@@ -76,6 +76,17 @@ const get_check = async (req,res)=>{
     })
 }   
 
+const get_user = async (req,res) => {
+    let userData = req.userData
+    
+    if(userData){
+        return res.status(200).json(userData)
+    }
+    
+    userData = await UserModel.findOne({email: req.email})
+    return res.status(200).json(userData)
+}
+
 
 
 const generateToken = (email) =>{
@@ -86,5 +97,6 @@ const generateToken = (email) =>{
 module.exports = {
     post_add_user,
     post_sign_in,
-    get_check
+    get_check,
+    get_user
 }

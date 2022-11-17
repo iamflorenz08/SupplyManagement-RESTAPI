@@ -1,6 +1,8 @@
 require('dotenv').config()
 const jwt = require('jsonwebtoken')
+const UserModel = require('../models/UserModel')
 const {OAuth2Client} = require('google-auth-library');
+const e = require('express');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
 const authenticateToken = async (req,res,next) =>{
@@ -15,19 +17,23 @@ const authenticateToken = async (req,res,next) =>{
                 idToken: token,
                 audience: process.env.CLIENT_ID, 
             });
-            const payload = ticket.getPayload();
-            req.payload = payload
+            const payload = ticket.getPayload();        
+            req.email = payload.email
             next()
         }catch(error){
-            return res.sendStatus(401)
+            return res.status(401)
         }
     }
     else{
-        jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, data)=>{
-            if(err) return res.sendStatus(401)
-            req.token = token
-            next()
-        })
+        const User = await UserModel.findOne({access_token: token})
+        if(User){
+            jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, data)=>{
+                if(err) return res.sendStatus(401)
+                req.userData = User
+                next()
+            })
+        }
+        return res.status(401) 
     }   
 }
 
