@@ -5,13 +5,13 @@ const axios = require('axios')
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000
 const AuthRoute = require('./routes/AuthRoute')
-const SupplyRoute = require('./routes/SupplyRoute');
-const { response } = require('express');
+const SupplyRoute = require('./routes/SupplyRoute')
+const Profileroute = require('./routes/ProfileRoute')
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
         app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
-        setInterval(refresh,240000)
+        //setInterval(refresh,1000)
     }) 
     .catch((error) =>{
         console.log(error)
@@ -20,15 +20,16 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-app.use(AuthRoute);
+app.use(AuthRoute)
 app.use(SupplyRoute)
+app.use(Profileroute)
 
 app.get('/',(req,res)=>{
     res.status(200).send('Welcome to RES REST Api')
 })
 
 const refresh = ()=> {
-    axios.get('https://supply-management-restapi.vercel.app')
+    axios.get('http://localhost:3000/')
         .then((response)=>{
             console.log(response.data)
         })

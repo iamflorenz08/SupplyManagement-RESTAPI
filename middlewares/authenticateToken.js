@@ -2,7 +2,6 @@ require('dotenv').config()
 const jwt = require('jsonwebtoken')
 const UserModel = require('../models/UserModel')
 const {OAuth2Client} = require('google-auth-library');
-const e = require('express');
 const client = new OAuth2Client(process.env.CLIENT_ID);
 
 const authenticateToken = async (req,res,next) =>{
@@ -29,6 +28,7 @@ const authenticateToken = async (req,res,next) =>{
         if(User){
             jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, data)=>{
                 if(err) return res.sendStatus(401)
+                req.email = User.email
                 req.userData = User
                 next()
             })
