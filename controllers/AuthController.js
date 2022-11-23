@@ -1,6 +1,8 @@
 const UserModel = require('../models/UserModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
+const NodeMailer = require('../utils/NodeMailer')
+const { raw } = require('express')
 require('dotenv').config()
 
 const post_add_user = async (req, res) =>{
@@ -79,23 +81,50 @@ const get_check = async (req,res)=>{
 const get_user = async (req,res) => {
     try{
         let userData = req.userData
-    
         if(userData){
             return res.status(200).json(userData)
         }
-        
         userData = await UserModel.findOne({email: req.email})
         return res.status(200).json(userData)
     }catch{
         return res.sendStatus(400)
     }
-    
 }
 
+const get_users = async(req,res) => {
+    const Users = await UserModel.find()
+        .select('email photo_URL full_name mobile_number department position isApproved createdAt')
+        .limit(10)
+    res.status(200).json(Users)
+}
 
+const post_recover = async(req,res) => {
+    const email = req.body.email
+    const User = await UserModel.findOne({email})
+    if(!User) return res.status(200).json({message: "No gmail found"})
+    if(User.password.isGmail) return res.status(200).json({message: "This account is gmail"})
+    
+    let token = await recoveryToken(email)
+    let nodemailer = await NodeMailer.sendRecoveryEmail(email, token)
+    res.status(200).json({message: "Email sent"})
+}
+
+const post_auth_reset = async (req,res) => {
+    const email = req.email
+    const rawPassword = req.password
+    const password = await bcrypt.hash(rawPassword, 10)
+    let UserUpdate = await UserModel.findOneAndUpdate({email},{password:{isGmail: false, password}, access_token: generateToken(email)})
+    if(!UserUpdate)res.status(200).json({message:"Error", isError: true})
+    res.status(200).json({message:"Password changed", isError: false})
+}
 
 const generateToken = (email) =>{
     const token = jwt.sign({email}, process.env.ACCESS_SECRET_TOKEN)
+    return token
+}
+
+const recoveryToken = (email) =>{
+    const token = jwt.sign({email}, process.env.RECOVERY_TOKEN,{expiresIn: '5m'})
     return token
 }
 
@@ -103,5 +132,8 @@ module.exports = {
     post_add_user,
     post_sign_in,
     get_check,
-    get_user
+    get_user,
+    get_users,
+    post_recover,
+    post_auth_reset
 }

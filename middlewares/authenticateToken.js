@@ -11,7 +11,6 @@ const authenticateToken = async (req,res,next) =>{
     if(token == null) return res.sendStatus(401)
 
     const User = await UserModel.findOne({access_token: token})
-
     if(User){
         jwt.verify(token, process.env.ACCESS_SECRET_TOKEN, (err, data)=>{
             if(err) return res.sendStatus(401)
