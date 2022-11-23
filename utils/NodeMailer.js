@@ -7,9 +7,10 @@ const sendRecoveryEmail = (email,token) => {
     ejs.renderFile('./views/email_template.ejs', {token: token} ,async(err,data)=>{
         let transporter = nodemailer.createTransport({
             service: "gmail",
+            port: 465,
             auth: {
-              user: process.env.EMAIL, // generated ethereal user
-              pass: process.env.EMAIL_PASSWORD, // generated ethereal password
+              user: process.env.EMAIL,
+              pass: process.env.EMAIL_PASSWORD,
             },
         });
     
