@@ -55,6 +55,7 @@ const UserSchema = new Schema({
         type: String,
         default: null
     },
+    
     isApproved: {
         type: Boolean,
         default: false

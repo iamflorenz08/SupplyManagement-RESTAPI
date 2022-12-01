@@ -2,45 +2,52 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const SupplySchema = new Schema({
-    serial_number: {
+    item_type: {
         type: String,
-        unique: true,
         required: true
+    },
+    product_code: {
+        type: String,
+        required: true
+    },
+    photo_url: {
+        type: String,
+        default: null
     },
     item_name: {
         type: String,
-        required: true
+        required: true,
     },
-    item_image:{
+    storage_no: {
         type: String,
-        default: null
-    },
-    item_desc: {
-        type: String,
-        default: null
+        required: true,
     },
     category: {
         type: String,
-        default: "Others"
+        required: true
     },
-    max_quantity: {
+    current_supply:{
         type: Number,
         default: 0
     },
-    available: {
-        type: Number,
-        default: 0
+    unit_measurement: {
+        type: String,
+        required: true
     },
-    location:{
+    source_of_fund: {
+        type: String,
+        required: true
+    },
+    unit_cost: {
+        type: Number,
+        required: true
+    },
+    desc: {
         type: String,
         default: null
-    },
-    isReturnable:{
-        type: Boolean,
-        default: false
     }
 })
 
-const SupplyModel = mongoose.model('supplies', SupplySchema)
+const SupplyModel = mongoose.model('stock', SupplySchema)
 
 module.exports = SupplyModel

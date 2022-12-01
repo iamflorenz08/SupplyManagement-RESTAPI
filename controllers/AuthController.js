@@ -2,7 +2,6 @@ const UserModel = require('../models/UserModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const NodeMailer = require('../utils/NodeMailer')
-const { raw } = require('express')
 require('dotenv').config()
 
 const post_add_user = async (req, res) =>{

@@ -7,6 +7,7 @@ const PORT = process.env.PORT || 3000
 const AuthRoute = require('./routes/AuthRoute')
 const SupplyRoute = require('./routes/SupplyRoute')
 const Profileroute = require('./routes/ProfileRoute')
+const RequisitionRoute = require('./routes/RequisitionRoute')
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
@@ -20,7 +21,6 @@ mongoose.connect(process.env.MONGO_URI)
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
-
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:5000")
     res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
@@ -30,6 +30,7 @@ app.use((req, res, next) => {
 app.use(AuthRoute)
 app.use(SupplyRoute)
 app.use(Profileroute)
+app.use(RequisitionRoute)
 app.get('/',(req,res)=>{
     res.status(200).send('Welcome to RES REST Api')
 })
