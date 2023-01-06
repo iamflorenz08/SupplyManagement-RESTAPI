@@ -1,4 +1,5 @@
 const UserModel = require('../models/UserModel')
+const AdminModel = require('../models/AdminModel')
 const bcrypt = require('bcrypt')
 const jwt = require('jsonwebtoken')
 const NodeMailer = require('../utils/NodeMailer')
@@ -18,6 +19,7 @@ const post_add_user = async (req, res) =>{
     try{
         const User = await UserModel.create(
             { 
+                id_no: userData.id_no,
                 email: userData.email, 
                 password: {
                     password: password,
@@ -90,10 +92,28 @@ const get_user = async (req,res) => {
     }
 }
 
-const get_users = async(req,res) => {
-    const Users = await UserModel.find()
+const get_user_data = async(req,res) => {
+    const employee_id = req.params.employee_id
+    const employee_data = await UserModel.findOne({_id: employee_id})
         .select('email photo_URL full_name mobile_number department position isApproved createdAt')
-        .limit(10)
+    if(!employee_data) return res.status(200).json({message: "not found", isError: true})
+
+    return res.status(200).json(employee_data)
+}
+
+const get_user_count = async(req,res) => {
+    const user_count = await UserModel.countDocuments()
+    res.status(200).json({user_count})
+}
+
+const get_users = async(req,res) => {
+    const page = req.params.page
+    const limit = req.params.limit
+    const skip = (page - 1) * limit
+    const Users = await UserModel.find()
+        .select('id_no email photo_URL full_name mobile_number department position isApproved createdAt')
+        .skip(skip)
+        .limit(limit)
     res.status(200).json(Users)
 }
 
@@ -127,6 +147,23 @@ const recoveryToken = (email) =>{
     return token
 }
 
+const post_edit_user = async(req,res) => {
+    const body = req.body
+    await UserModel.findByIdAndUpdate({_id: body._id}, body)
+    res.sendStatus(200)
+}   
+
+const post_admin_auth = async(req,res) => {
+    const username = req.body.username
+    const rawPassword = req.body.password
+    const admin = await AdminModel.findOne({username})
+    if(!admin) return res.status(200).json({token: null})
+    const password = await bcrypt.compare(rawPassword, admin.password)
+    if(!password) return res.status(200).json({token: null})
+    const token = jwt.sign({username}, process.env.RECOVERY_TOKEN)
+    res.status(200).json({token})
+}
+
 module.exports = {
     post_add_user,
     post_sign_in,
@@ -134,5 +171,9 @@ module.exports = {
     get_user,
     get_users,
     post_recover,
-    post_auth_reset
+    post_auth_reset,
+    get_user_data,
+    get_user_count,
+    post_edit_user,
+    post_admin_auth
 }

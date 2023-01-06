@@ -25,6 +25,11 @@ const PasswordSchema = new Schema({
 }, {_id:false})
 
 const UserSchema = new Schema({
+    id_no: {
+        type: String,
+        unique: true,
+        required: true
+    },
     email: {
         type: String,
         unique: true,
