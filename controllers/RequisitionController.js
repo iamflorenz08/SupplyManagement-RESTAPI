@@ -90,8 +90,15 @@ const get_requisition = async (req, res) => {
             filter.status = ['On going']
         }
     }
+    let non_registered_filter = {...filter}
 
-    const Requisition = await RequistionModel.find(filter)
+    if(query.search){
+        const user_ids = await UserModel.find({id_no: {$regex: '.*' + query.search + '.*' }}).select('_id')
+        non_registered_filter = {...non_registered_filter,'userDetails.id_no': {$regex: '.*' + query.search + '.*'}}
+        filter = {...filter, user_id: user_ids}
+    }
+
+    const Requisition = await RequistionModel.find({$or: [filter, non_registered_filter]})
         .skip(skip)
         .limit(limit)
         .populate('user_id', '-password')
@@ -143,7 +150,14 @@ const get_requisition_count = async (req, res) => {
         }
     }
 
-    const count = await RequistionModel.countDocuments(filter)
+    let non_registered_filter = {...filter}
+    if(query.search){
+        const user_ids = await UserModel.find({id_no: {$regex: '.*' + query.search + '.*' }}).select('_id')
+        non_registered_filter = {...non_registered_filter,'userDetails.id_no': {$regex: '.*' + query.search + '.*'}}
+        filter = {...filter, user_id: user_ids}
+    }
+
+    const count = await RequistionModel.countDocuments({$or: [filter, non_registered_filter]})
     return res.status(200).json({ count })
 }
 

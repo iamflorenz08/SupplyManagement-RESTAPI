@@ -160,8 +160,14 @@ const post_admin_auth = async(req,res) => {
     if(!admin) return res.status(200).json({token: null})
     const password = await bcrypt.compare(rawPassword, admin.password)
     if(!password) return res.status(200).json({token: null})
-    const token = jwt.sign({username}, process.env.RECOVERY_TOKEN)
+    const token = jwt.sign({username}, process.env.ACCESS_SECRET_TOKEN)
     res.status(200).json({token})
+}
+
+const get_admin = async(req,res) => {
+    const username = req.username
+    const admin_detail = await AdminModel.findOne({username}).select('username adminType')
+    res.status(200).json(admin_detail)
 }
 
 module.exports = {
@@ -175,5 +181,6 @@ module.exports = {
     get_user_data,
     get_user_count,
     post_edit_user,
-    post_admin_auth
+    post_admin_auth,
+    get_admin
 }

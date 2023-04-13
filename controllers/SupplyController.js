@@ -45,6 +45,10 @@ const get_all_details = async (req,res)=>{
         if(query.sort_by){
             sort = {current_supply: -1}
         }
+
+        if(query.search){
+            filter = {...filter, item_name: {$regex: '.*' + query.search + '.*', $options: 'i' }}
+        }
     }
     try{
         const SupplyDetails = await SupplyModel.find(filter).sort(sort).skip(skip).limit(limit)
@@ -103,6 +107,10 @@ const get_supply_count = async(req,res) =>{
 
             filter = {...filter, category}
         }
+
+        if(query.search){
+            filter = {...filter, item_name: {$regex: '.*' + query.search + '.*', $options: 'i' }}
+        }
     }
     const stock_count = await SupplyModel.countDocuments(filter)
     res.status(200).json({stock_count})
@@ -114,6 +122,11 @@ const post_edit_details = async(req,res) => {
     res.sendStatus(200)
 }
 
+const get_not_available = async(req,res) => {
+    const stocks = await SupplyModel.find({current_supply: 0})
+    if(!stocks) return res.status(200).json({isError:true})
+    res.status(200).json(stocks)
+}
 
 module.exports = {
     post_add_item,
@@ -122,5 +135,6 @@ module.exports = {
     get_supply_count,
     get_supply_detail,
     post_edit_details,
-    delete_item
+    delete_item,
+    get_not_available
 }
