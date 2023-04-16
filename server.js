@@ -1,6 +1,14 @@
 require('dotenv').config()
 const express = require('express')
+const { createServer } = require('http')
+const { Server } = require('socket.io')
 const app = express()
+const httpServer = createServer(app)
+const io = new Server(httpServer, {
+    cors: {
+        origin: "http://localhost:3000"
+    }
+})
 const axios = require('axios')
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000
@@ -10,13 +18,13 @@ const Profileroute = require('./routes/ProfileRoute')
 const RequisitionRoute = require('./routes/RequisitionRoute')
 const LogRoute = require('./routes/LogRoute')
 const NotificationRoute = require('./routes/NotificationRoute')
+const SupplyRouteV2 = require('./routes/v2/SupplyRoute')
 
 mongoose.connect(process.env.MONGO_URI)
     .then(() => {
-        app.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`));
-        //setInterval(refresh,1000)
-    }) 
-    .catch((error) =>{
+        httpServer.listen(PORT, () => console.log(`Server is running on http://localhost:${PORT}`))
+    })
+    .catch((error) => {
         console.log(error)
     })
 
@@ -36,19 +44,16 @@ app.use(Profileroute)
 app.use(RequisitionRoute)
 app.use(LogRoute)
 app.use(NotificationRoute)
-app.get('/',(req,res)=>{
+app.use('/api/v2/supply', SupplyRouteV2)
+app.get('/', (req, res) => {
     res.status(200).send('Welcome to RES REST Api')
 })
 
-const refresh = ()=> {
-    axios.get('http://localhost:3000/')
-        .then((response)=>{
-            console.log(response.data)
-        })
-        .catch((error)=> {
-            // handle error
-            console.log(error);
-          })
-}
+io.on("connection", (socket) => {
+    socket.on("notify-server", (data) => {
+        io.emit("notify-admin", socket.id)
+    })
+})
+
 
 

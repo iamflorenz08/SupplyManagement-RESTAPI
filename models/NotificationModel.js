@@ -2,7 +2,7 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const NotificationSchema = new Schema({
-    user: Schema.Types.ObjectId,
+    user: {type: Schema.Types.ObjectId, ref: 'user'},
     request : {type: Schema.Types.ObjectId, ref: 'requisition'},
     approval: String,
     isRead: Boolean

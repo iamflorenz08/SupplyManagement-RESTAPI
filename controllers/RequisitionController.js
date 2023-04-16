@@ -8,7 +8,6 @@ const post_request_item = async (req, res) => {
     const raw_items = req.body.items
     const product_codes = []
     let isValid = true
-    console.log(req.body)
     raw_items.map(item => {
         product_codes.push(item.product_code)
     })
@@ -290,7 +289,6 @@ const post_complete_request = async (req, res) => {
 
         if (item.item_type === 'RIS') continue
 
-        console.log(item.item_type)
         const supply = await SupplyModel.findOneAndUpdate({ product_code: item.product_code },
             { $inc: { current_supply: +item.quantity } });
         if (!supply) return res.status(200).json({ message: "An error occured.", isError: true })

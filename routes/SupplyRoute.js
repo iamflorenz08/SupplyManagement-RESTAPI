@@ -13,5 +13,4 @@ route.get('/supply/details/:page/:limit' ,SupplyController.get_all_details)
 route.get('/supply/count', SupplyController.get_supply_count)
 route.get('/supply/info/:stock_id', SupplyController.get_supply_detail)
 
-
 module.exports = route
