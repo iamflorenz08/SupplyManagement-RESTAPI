@@ -1,4 +1,6 @@
 const SavedItemModel = require('../../models/SavedItemModel')
+const SupplyModel = require('../../models/SupplyModel')
+const recommender = require('../../utils/ContentBasedFiltering')
 
 const get_saved_items = async (req,res) =>{
     const user_id = req.params.user_id
@@ -23,8 +25,37 @@ const delete_saved_items = async(req,res) => {
     return res.status(200).json({message: "Deleted!", isError: false})
 }
 
+const get_recommend = async(req,res) => {
+    const user_id = req.params.user_id
+    const last_saved_item = await SavedItemModel.findOne({user: user_id}).sort({_id: -1})
+    if(!last_saved_item) return res.send([])
+    if(!recommender.data.length) await trainRecommender()
+    const recommended_items = recommender.getSimilarDocuments(last_saved_item.item, 0 , 5)
+    const recommended_ids = recommended_items.map(item => item.id)
+    const recommended_details = await SupplyModel.find({_id: recommended_ids})
+    res.send(
+        recommended_ids.map(id=> {
+            const detail = recommended_details.filter(detail=> {if(id == detail.id) return detail})
+            return detail[0]
+        })
+    )
+}
+
+const trainRecommender = async() =>{
+    const supplies = await SupplyModel.find().select('_id item_type category unit_measurement')
+    const raw_data = []
+    for(supply of supplies){
+        raw_data.push({
+            id: supply._id,
+            content: `${supply.item_type.replaceAll(' ', '')} ${supply.category.replaceAll(' ', '')} ${supply.unit_measurement.replaceAll(' ', '')}`
+        })
+    }
+    recommender.train(raw_data)
+}
+
 module.exports = {
     get_saved_items,
     post_saved_items,
-    delete_saved_items
+    delete_saved_items,
+    get_recommend,
 }

@@ -23,10 +23,14 @@ const read_notification = async(req,res) => {
     await NotificationModel.findByIdAndUpdate({_id}, {isRead: true})
 }
 
-
+const post_read_all = async(req,res) => {
+    let notifications = await NotificationModel.updateMany({approval : 'to_be_approved'}, {isAdminRead: true})
+    res.sendStatus(200)
+}
 
 module.exports = {
     get_notification,
     read_notification,
-    get_all_notification
+    get_all_notification,
+    post_read_all
 }

@@ -9,6 +9,7 @@ const io = new Server(httpServer, {
         origin: "http://localhost:3000"
     }
 })
+
 const axios = require('axios')
 const mongoose = require('mongoose');
 const PORT = process.env.PORT || 3000
@@ -27,8 +28,6 @@ mongoose.connect(process.env.MONGO_URI)
     .catch((error) => {
         console.log(error)
     })
-
-
 
 app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
