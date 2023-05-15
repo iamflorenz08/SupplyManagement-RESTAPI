@@ -33,7 +33,8 @@ app.use(express.json())
 app.use(express.urlencoded({ extended: true }))
 app.use((req, res, next) => {
     res.header("Access-Control-Allow-Origin", "http://localhost:3000")
-    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept");
+    res.header("Access-Control-Allow-Methods", "*")
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept")
     next();
 });
 
@@ -44,7 +45,7 @@ app.use(RequisitionRoute)
 app.use(LogRoute)
 app.use(NotificationRoute)
 app.use('/api/v2/supply', SupplyRouteV2)
-app.get('/', (req, res) => {
+app.get('*', (req, res) => {
     res.status(200).send('Welcome to RES REST Api')
 })
 
@@ -54,5 +55,29 @@ io.on("connection", (socket) => {
     })
 })
 
+// const csv = require('csv-parser')
+// const fs = require('fs')
+// const SupplyModel = require('./models/SupplyModel')
+// const results = [];
 
+// fs.createReadStream('sample.csv')
+//     .pipe(csv())
+//     .on('data', (data) => {
+
+//         const unit_cost = parseFloat(data.unit_cost)
+//         const unit_measurement = data.unit_measurement.trim()
+//         const item_type = (unit_cost < 15000.0) ? "RIS" : (unit_cost < 50000.0) ? "ICS" : "PAR";
+//         const source_of_fund = (item_type === "ICS" || item_type === "PAR") ? "National fund" : null;
+//         const item_code_type = (item_type === "ICS" || item_type === "PAR") ? "PropertyNo" : "StockNo";
+    
+//         results.push({...data, item_type, source_of_fund, item_code_type,unit_cost})
+//     })
+//     .on('end', async() => {
+//         console.log(results)
+//         await SupplyModel.insertMany(results)
+//         // [
+//         //   { NAME: 'Daffy Duck', AGE: '24' },
+//         //   { NAME: 'Bugs Bunny', AGE: '22' }
+//         // ]
+//     });
 

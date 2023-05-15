@@ -2,6 +2,9 @@ const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 
 const SupplySchema = new Schema({
+    item_code_type: {
+        type: String
+    },
     item_type: {
         type: String,
         required: true
@@ -20,11 +23,11 @@ const SupplySchema = new Schema({
     },
     storage_no: {
         type: String,
-        required: true,
+        default: null,
     },
     category: {
         type: String,
-        required: true
+        default: null
     },
     current_supply:{
         type: Number,
@@ -32,19 +35,23 @@ const SupplySchema = new Schema({
     },
     unit_measurement: {
         type: String,
-        required: true
+        default: null
     },
     source_of_fund: {
         type: String,
-        required: true
+        default: null
     },
     unit_cost: {
         type: Number,
-        required: true
+        default: null
     },
     desc: {
         type: String,
         default: null
+    },
+    buffer: {
+        type: Number,
+        default: 0
     }
 })
 
