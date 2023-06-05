@@ -46,7 +46,8 @@ const UserSchema = new Schema({
         type: FullNameSchema
     },
     mobile_number: {
-        type: String
+        type: String,
+        default: null
     },
     department: {
         type: String,
@@ -62,6 +63,10 @@ const UserSchema = new Schema({
     },
     
     isApproved: {
+        type: Boolean,
+        default: false
+    },
+    archive: {
         type: Boolean,
         default: false
     }

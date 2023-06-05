@@ -29,7 +29,7 @@ const SupplySchema = new Schema({
         type: String,
         default: null
     },
-    current_supply:{
+    current_supply: {
         type: Number,
         default: 0
     },
@@ -52,6 +52,10 @@ const SupplySchema = new Schema({
     buffer: {
         type: Number,
         default: 0
+    },
+    archive: {
+        type: Boolean,
+        default: false
     }
 })
 

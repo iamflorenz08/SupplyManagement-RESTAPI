@@ -60,7 +60,7 @@ io.on("connection", (socket) => {
 // const SupplyModel = require('./models/SupplyModel')
 // const results = [];
 
-// fs.createReadStream('sample.csv')
+// fs.createReadStream('item_dataset.csv')
 //     .pipe(csv())
 //     .on('data', (data) => {
 
@@ -69,15 +69,26 @@ io.on("connection", (socket) => {
 //         const item_type = (unit_cost < 15000.0) ? "RIS" : (unit_cost < 50000.0) ? "ICS" : "PAR";
 //         const source_of_fund = (item_type === "ICS" || item_type === "PAR") ? "National fund" : null;
 //         const item_code_type = (item_type === "ICS" || item_type === "PAR") ? "PropertyNo" : "StockNo";
-    
-//         results.push({...data, item_type, source_of_fund, item_code_type,unit_cost})
+//         results.push({ ...data, item_type, source_of_fund, item_code_type, unit_cost })
 //     })
-//     .on('end', async() => {
-//         console.log(results)
-//         await SupplyModel.insertMany(results)
-//         // [
-//         //   { NAME: 'Daffy Duck', AGE: '24' },
-//         //   { NAME: 'Bugs Bunny', AGE: '22' }
-//         // ]
-//     });
+//     .on('end', async () => {
+//         random_indices = []
+//         random_results = []
 
+//         for(result of results){
+//             if(result.item_type === "ICS") random_results.push(result)
+//         }
+
+//         while (random_indices.length < 50) {
+//             const index = Math.floor(Math.random() * results.length) + 0
+//             if (!random_indices.includes(index)) {
+//                 random_indices.push(index)
+//             }
+//         }
+
+//         for (index of random_indices) {
+//             random_results.push(results[index])
+//         }
+
+//         await SupplyModel.insertMany(random_results)
+//     });
